@@ -12,11 +12,17 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -50,6 +56,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tl=findViewById(R.id.tab);
         tl.setupWithViewPager(vp);
 
+        ConnectivityManager connectivityManager=(ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo =connectivityManager.getActiveNetworkInfo();
+        if (networkInfo==null || !networkInfo.isConnected() || !networkInfo.isAvailable()) {
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.alart_dialog);
+            dialog.setCancelable(false);
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().getAttributes().windowAnimations= android.R.style.Animation_Dialog;
+            Button button =findViewById(R.id.retry_btn);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recreate();
+                }
+            });
+        }else{
         //setSupportActionBar(toolbar);
 
 
@@ -109,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-    }
+    }}
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
